@@ -2,24 +2,37 @@ import logo from './logo.svg';
 import './App.css';
 import React, { useRef, useState } from "react";
 
+var power = -1
+
 
 //var operator = 'no';
 function App() {
     let[operator, setOperator] = useState('no');
     let [currentValue, setCurrentValue] = useState(0);
-   let [inputValue, setInputValue] = useState(0);
+   let [inputValue, setInputValue] = useState("0");
    let [flag, setFlag] = useState(true);
    let [dot, setDot] = useState(false);
+   //var power = -1
    //let number = function(x) {
        //current = x;
        //this.myInputRef.current.value = "drugsrbad"
    //}
     let onButtonClick = function(buttonValue) {
         if (flag == true) {
-            setInputValue(buttonValue);
+            setInputValue(buttonValue.toString());
             setFlag(false);
         } else {
-            setInputValue(inputValue * 10 + buttonValue)
+            if (dot === false) {
+                setInputValue((inputValue * 10 + buttonValue).toString())
+            } else if (dot === true){
+                //var power = -1;
+                var dotNumber =  Number(inputValue) + Math.pow(10, power) * buttonValue
+                let n = dotNumber.toFixed(Math.abs(power));
+                setInputValue(n)
+                power = power-1;
+                //let n =
+            }
+            //setInputValue((inputValue * 10 + buttonValue).toString())
 
         }
         /*setCurrentValue(currentValue * 10 + buttonValue)
@@ -31,15 +44,15 @@ function App() {
     let operate = function() {
         var newValue;
         if (operator === '-') {
-            newValue = (currentValue - inputValue)
+            newValue = (currentValue - Number(inputValue))
         } else if (operator === '+') {
-            newValue = (currentValue + inputValue)
+            newValue = (currentValue + Number(inputValue))
         } else if (operator === '*') {
-            newValue = (currentValue * inputValue)
+            newValue = (currentValue * Number(inputValue))
         } else if (operator === '/') {
-            newValue = (currentValue / inputValue)
+            newValue = (currentValue / Number(inputValue))
         } else {
-            newValue = inputValue;
+            newValue = Number(inputValue);
         }
         return newValue
     }
@@ -52,6 +65,7 @@ function App() {
        setCurrentValue(operate())
        setOperator('+');
        setFlag(true)
+       power = -1;
    }
 
    let minus = function() {
@@ -62,6 +76,7 @@ function App() {
        setCurrentValue(operate())
        setOperator('-')
        setFlag(true)
+       power = -1;
    }
 
    let multiply = function() {
@@ -72,6 +87,7 @@ function App() {
        setCurrentValue(operate())
        setOperator('*');
        setFlag(true)
+       power = -1
    }
 
    let divide = function() {
@@ -82,6 +98,7 @@ function App() {
        setCurrentValue(operate())
        setOperator('/')
        setFlag(true)
+       power = -1
 
    }
 
@@ -95,21 +112,34 @@ function App() {
        //console.log("newValue = " + newValue)
        setOperator('no')
        finalValue = operate()
-       setInputValue(finalValue);
+       setInputValue(finalValue.toString());
    }
 
    let clearAll = function() {
        setCurrentValue(0)
-       setInputValue(0)
+       setInputValue("0")
        operator = 'no'
        setFlag(true)
+       setDot(false)
+       power = -1;
    }
 
    let clear = function() {
-        setCurrentValue(Math.floor(inputValue/10));
-        setInputValue(Math.floor(inputValue/10));
+        //setCurrentValue(Number(Math.floor(inputValue/10)));
+        var lessOneDigit = inputValue.substring(0, inputValue.length-1);
+        setInputValue(lessOneDigit)
+        setCurrentValue(Number(lessOneDigit));
         if(currentValue < 10) {
             operator = 'no'
+            setDot(false);
+            power = -1
+        }
+   }
+
+   let dotted = function() {
+        if (dot === false) {
+            setDot(true);
+            setInputValue(inputValue + ".");
         }
    }
 
@@ -133,6 +163,7 @@ function App() {
           <button class = "buttons" onClick={(e) => plus()}>+</button>
           <button class = "buttons" onClick={(e) => minus()}>-</button><br/>
           <button class = "buttons" onClick={(e) => onButtonClick(0)}>0</button>
+          <button class = "buttons" onClick={(e) => dotted()}>.</button>
           <button class = "buttons" onClick={(e) => equal()}>=</button>
       </div>
   )
